@@ -16,9 +16,20 @@ public class RpcConstant {
     public static final String ZK_SERVICE_PATH = "/rpc";
 
     /**
+     * 字符编码
+     */
+    public static final String UTF_8 = "UTF-8";
+
+    /**
      * 路径分隔符号
      */
-    private static final String PATH_DELIMITER = "/";
+    public static final String PATH_DELIMITER = "/";
+
+    /**
+     *
+     * 服务tag
+     */
+    public static final String SERVICE_TAG = "/service";
 
     //-----------------------序列化协议------------------------//
     /**

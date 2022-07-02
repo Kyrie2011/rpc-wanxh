@@ -1,10 +1,17 @@
 package cn.rpc.client.discovery.impl;
 import cn.rpc.client.discovery.ServiceDiscovery;
+import cn.rpc.common.constant.RpcConstant;
 import cn.rpc.common.model.Service;
 import cn.rpc.common.serializer.ZooKeeperSerializer;
+import com.alibaba.fastjson2.JSON;
 import org.I0Itec.zkclient.ZkClient;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @program: rpc-wanxh
@@ -22,8 +29,24 @@ public class ZooKeeperServiceDiscovery implements ServiceDiscovery {
         zkClient.setZkSerializer(new ZooKeeperSerializer());
     }
 
+    /**
+     * 通过服务名称获取服务列表(服务发现)
+     * @param name
+     * @return List<Service>
+     */
     @Override
     public List<Service> findServiceList(String name) {
-        return null;
+        String servicePath = RpcConstant.ZK_SERVICE_PATH + RpcConstant.PATH_DELIMITER + name + RpcConstant.SERVICE_TAG;
+        List<String> children = zkClient.getChildren(servicePath);
+        return Optional.ofNullable(children).orElse(new ArrayList<>()).stream().map( str -> {
+            String serviceStr = null;
+            try {
+                serviceStr = URLDecoder.decode(str, RpcConstant.UTF_8);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            // 解析成Service对象
+            return JSON.parseObject(serviceStr, Service.class);
+        }).collect(Collectors.toList());
     }
 }
