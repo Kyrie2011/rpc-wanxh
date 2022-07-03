@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * @program: rpc-wanxh
  * @Date: 2022/7/3 23:03
  * @Author: 阿左不是蜗牛
- * @Description: 服务端网络实现
+ * @Description: 服务端网络实现，提供Netty网络服务开启、关闭的能力
  */
 public class NettyRpcServer extends RpcServer {
 
