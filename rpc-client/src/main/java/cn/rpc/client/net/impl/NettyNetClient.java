@@ -1,8 +1,8 @@
 package cn.rpc.client.net.impl;
 
 import cn.rpc.client.net.NetClient;
-import cn.rpc.client.net.handler.Send2Handler;
-import cn.rpc.client.net.handler.SendHandler;
+import cn.rpc.client.net.handler.RequestSend2Handler;
+import cn.rpc.client.net.handler.RequestSendHandler;
 import cn.rpc.common.model.RpcRequest;
 import cn.rpc.common.model.RpcResponse;
 import cn.rpc.common.model.Service;
@@ -45,7 +45,7 @@ public class NettyNetClient implements NetClient {
      * 已连接的服务缓存
      * key：服务地址，格式：ip:port
      */
-    public static Map<String, Send2Handler> connectedServerNodes = new ConcurrentHashMap<>();
+    public static Map<String, RequestSend2Handler> connectedServerNodes = new ConcurrentHashMap<>();
 
     @Override
     public byte[] sendRequest(byte[] data, Service service) throws InterruptedException {
@@ -54,7 +54,7 @@ public class NettyNetClient implements NetClient {
         String[] ipAndPort = address.split(":");
         final String serverAddress = ipAndPort[0];
         final String serverPort = ipAndPort[1];
-        SendHandler sendHandler = new SendHandler(data);
+        RequestSendHandler sendHandler = new RequestSendHandler(data);
         byte[] respData;
         // 配置客户端
         EventLoopGroup eventExecutors = new NioEventLoopGroup();
@@ -91,7 +91,7 @@ public class NettyNetClient implements NetClient {
         synchronized (address) { // TODO 代码块要加锁
             // 已连接服务的缓存
             if (connectedServerNodes.containsKey(address)) {
-                Send2Handler handler = connectedServerNodes.get(address);
+                RequestSend2Handler handler = connectedServerNodes.get(address);
                 logger.info("----使用现有的连接----");
                 return handler.sendRequest(rpcRequest);
             }
@@ -99,7 +99,7 @@ public class NettyNetClient implements NetClient {
             String[] ipAndPort = address.split(":");
             final String serverAddress = ipAndPort[0];
             final String serverPort = ipAndPort[1];
-            Send2Handler handler = new Send2Handler(messageProtocol, address);
+            RequestSend2Handler handler = new RequestSend2Handler(messageProtocol, address);
             // 线程池提交
             threadPool.submit(() -> {
                 // 客户端启动类

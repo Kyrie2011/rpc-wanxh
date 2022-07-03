@@ -12,7 +12,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
-import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +26,8 @@ import java.util.concurrent.TimeUnit;
  * @Author: 阿左不是蜗牛
  * @Description: 发送请求处理类
  */
-public class Send2Handler extends ChannelInboundHandlerAdapter {
-    private static Logger logger = LoggerFactory.getLogger(Send2Handler.class);
+public class RequestSend2Handler extends ChannelInboundHandlerAdapter {
+    private static Logger logger = LoggerFactory.getLogger(RequestSend2Handler.class);
 
     /**
      * 等待通道建立最大时间
@@ -50,7 +49,7 @@ public class Send2Handler extends ChannelInboundHandlerAdapter {
 
     private CountDownLatch latch = new CountDownLatch(1);
 
-    public Send2Handler(MessageProtocol messageProtocol, String remoteAddress){
+    public RequestSend2Handler(MessageProtocol messageProtocol, String remoteAddress){
         this.messageProtocol = messageProtocol;
         this.remoteAddress = remoteAddress;
     }
