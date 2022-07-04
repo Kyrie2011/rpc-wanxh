@@ -16,8 +16,8 @@ import java.util.concurrent.CountDownLatch;
  * @Author: 阿左不是蜗牛
  * @Description: 请求发送处理类
  */
-public class RequestSendHandler extends ChannelInboundHandlerAdapter {
-    private static Logger logger = LoggerFactory.getLogger(RequestSendHandler.class);
+public class ClientRequestHandler extends ChannelInboundHandlerAdapter {
+    private static Logger logger = LoggerFactory.getLogger(ClientRequestHandler.class);
 
     private CountDownLatch countDownLatch;
 
@@ -25,7 +25,7 @@ public class RequestSendHandler extends ChannelInboundHandlerAdapter {
 
     private byte[] data;
 
-    public RequestSendHandler(byte[] data){
+    public ClientRequestHandler(byte[] data){
         countDownLatch = new CountDownLatch(1);
         this.data = data;
     }

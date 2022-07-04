@@ -49,18 +49,28 @@ public class NettyRpcServer extends RpcServer {
         // 启动服务
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
+            // 设置两个线程组bossGroup和workGroup
             serverBootstrap.group(bossGroup, workerGroup)
+                    // 设置服务端通道实现类型
                     .channel(NioServerSocketChannel.class)
-                    .option(ChannelOption.SO_BACKLOG, 100)
-                    .handler(new LoggingHandler(LogLevel.INFO)).childHandler(
-                    new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            ChannelPipeline pipeline = socketChannel.pipeline();
-                            pipeline.addLast(new ChannelRequestHandler());
-                        }
-                    }
-            );
+                    // backlog 指定了内核为”此套接字“排队的最大连接个数
+                    // 对于给定的监听套接字，内核要维护两个队列：未连接队列和已连接队列
+                    // backlog的值即为“未连接队列”和“已连接队列”的和
+                    // 如果大于队列的最大长度，请求会被拒绝
+                    .option(ChannelOption.SO_BACKLOG, 128)  // 设置最大连接个数
+                    .handler(new LoggingHandler(LogLevel.INFO))
+                    // 使用匿名内部类的形式初始化通道对象
+                    .childHandler(
+                            new ChannelInitializer<SocketChannel>() {
+                                @Override
+                                protected void initChannel(SocketChannel socketChannel) throws Exception {
+                                    ChannelPipeline pipeline = socketChannel.pipeline();
+                                    // 给pipeline管段设置处理器
+                                    pipeline.addLast(new ChannelRequestHandler());
+                                }
+                            }
+                    );
+            // 绑定端口号，启动服务端
             ChannelFuture future = serverBootstrap.bind(port).sync();
             logger.debug("Server started successfully");
             channel = future.channel();

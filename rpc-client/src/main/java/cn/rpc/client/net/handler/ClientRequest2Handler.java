@@ -26,8 +26,8 @@ import java.util.concurrent.TimeUnit;
  * @Author: 阿左不是蜗牛
  * @Description: 发送请求处理类
  */
-public class RequestSend2Handler extends ChannelInboundHandlerAdapter {
-    private static Logger logger = LoggerFactory.getLogger(RequestSend2Handler.class);
+public class ClientRequest2Handler extends ChannelInboundHandlerAdapter {
+    private static Logger logger = LoggerFactory.getLogger(ClientRequest2Handler.class);
 
     /**
      * 等待通道建立最大时间
@@ -49,7 +49,7 @@ public class RequestSend2Handler extends ChannelInboundHandlerAdapter {
 
     private CountDownLatch latch = new CountDownLatch(1);
 
-    public RequestSend2Handler(MessageProtocol messageProtocol, String remoteAddress){
+    public ClientRequest2Handler(MessageProtocol messageProtocol, String remoteAddress){
         this.messageProtocol = messageProtocol;
         this.remoteAddress = remoteAddress;
     }
