@@ -1,16 +1,18 @@
 package cn.rpc.server.net;
 
 import cn.rpc.server.RpcServer;
-import cn.rpc.server.handler.ChannelRequestHandler;
 import cn.rpc.server.handler.ServerRequestHandler;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,6 +95,59 @@ public class NettyRpcServer extends RpcServer {
     public void stop() {
         if (this.channel != null){
             this.channel.close();
+        }
+    }
+
+    /**
+     * @program: rpc-wanxh
+     * @Date: 2022/7/3 23:21
+     * @Author: 阿左不是蜗牛
+     * @Description: Channel通道处理器
+     */
+    private class ChannelRequestHandler extends ChannelInboundHandlerAdapter {
+
+        @Override
+        public void channelActive(ChannelHandlerContext ctx) throws Exception {
+            logger.debug("Channel active :{}", ctx);
+        }
+
+        @Override
+        public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+            // 线程池处理
+            pool.submit(() -> {
+                try {
+                    logger.debug("the server receives message :{}", msg);
+                    ByteBuf byteBuf = (ByteBuf) msg;
+                    // 读取消息数据, 写入reqData, 回收byteBuf
+                    byte[] reqData = new byte[byteBuf.readableBytes()];
+                    byteBuf.readBytes(reqData);
+                    // 手动回收
+                    ReferenceCountUtil.release(byteBuf);
+                    // 处理请求
+                    byte[] responseData = requestHandler.handleRequest(reqData);
+                    ByteBuf respBuf = Unpooled.buffer(responseData.length);
+                    // 输出响应
+                    respBuf.writeBytes(responseData);
+                    logger.debug("Send response:{}", respBuf);
+                    // 写出响应消息
+                    ctx.writeAndFlush(respBuf);
+                }catch (Exception e){
+                    logger.error("server read exception", e);
+                }
+            });
+
+        }
+
+        @Override
+        public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+            ctx.flush();
+        }
+
+        @Override
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+            cause.printStackTrace();
+            logger.error("Exception occurred:{}", cause.getMessage());
+            ctx.close();
         }
     }
 
