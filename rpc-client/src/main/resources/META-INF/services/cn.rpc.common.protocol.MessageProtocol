@@ -1,0 +1,2 @@
+cn.rpc.common.protocol.impl.JdkSerializeMessageProtocol
+cn.rpc.common.protocol.impl.ProtoBufMessageProtocol

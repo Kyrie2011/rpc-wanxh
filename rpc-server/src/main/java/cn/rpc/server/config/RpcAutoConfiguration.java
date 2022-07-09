@@ -4,6 +4,8 @@ import cn.rpc.client.discovery.impl.ZooKeeperServiceDiscovery;
 import cn.rpc.client.loadbalance.LoadBalance;
 import cn.rpc.client.net.impl.NettyNetClient;
 import cn.rpc.client.proxy.ClientProxyFactory;
+import cn.rpc.common.annotation.LoadBalanceAno;
+import cn.rpc.common.annotation.MessageProtocolAno;
 import cn.rpc.common.exception.RpcException;
 import cn.rpc.common.protocol.MessageProtocol;
 import cn.rpc.server.RpcServer;
@@ -89,8 +91,11 @@ public class RpcAutoConfiguration {
         Iterator<LoadBalance> iterator = loadBalances.iterator();
         while (iterator.hasNext()){
             LoadBalance loadBalance = iterator.next();
-
-            return loadBalance;
+            LoadBalanceAno annotation = loadBalance.getClass().getAnnotation(LoadBalanceAno.class);
+            Assert.notNull(annotation, "load balance name can not be empty!");
+            if (name.equals(annotation.value())) {
+                return loadBalance;
+            }
         }
         throw new RpcException("invalid message loadBalance config!");
     }
@@ -105,7 +110,9 @@ public class RpcAutoConfiguration {
         Iterator<MessageProtocol> iterator = loader.iterator();
         while (iterator.hasNext()) {
             MessageProtocol messageProtocol = iterator.next();
-//            supportMessageProtocols.put()
+            MessageProtocolAno ano = messageProtocol.getClass().getAnnotation(MessageProtocolAno.class);
+            Assert.notNull(ano, "message protocol name can not be empty!");
+            supportMessageProtocols.put(ano.value(), messageProtocol);
         }
         return supportMessageProtocols;
     }
@@ -121,7 +128,11 @@ public class RpcAutoConfiguration {
         Iterator<MessageProtocol> iterator = protocols.iterator();
         while (iterator.hasNext()){
             MessageProtocol messageProtocol = iterator.next();
-            return messageProtocol;
+            MessageProtocolAno messageProtocolAno = messageProtocol.getClass().getAnnotation(MessageProtocolAno.class);
+            Assert.notNull(messageProtocolAno, "message protocol name can not be empty!");
+            if (messageProtocolAno.value().equals(protocol)) {
+                return messageProtocol;
+            }
         }
         throw new RpcException("invalid message protocol config!");
 

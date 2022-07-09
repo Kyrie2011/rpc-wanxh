@@ -1,5 +1,7 @@
 package cn.rpc.common.protocol.impl;
 
+import cn.rpc.common.annotation.MessageProtocolAno;
+import cn.rpc.common.constant.RpcConstant;
 import cn.rpc.common.model.RpcRequest;
 import cn.rpc.common.model.RpcResponse;
 import cn.rpc.common.protocol.MessageProtocol;
@@ -14,6 +16,7 @@ import java.util.List;
  * @Author: 阿左不是蜗牛
  * @Description: JDK序列化消息协议
  */
+@MessageProtocolAno(RpcConstant.PROTOCOL_JDK)
 public class JdkSerializeMessageProtocol implements MessageProtocol {
 
     private byte[] serialize(Object obj) throws IOException {

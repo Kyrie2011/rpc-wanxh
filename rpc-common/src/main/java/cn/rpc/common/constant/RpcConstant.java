@@ -35,7 +35,7 @@ public class RpcConstant {
     /**
      * java序列化协议
      */
-    public static final String PROTOCOL_JAVA = "java";
+    public static final String PROTOCOL_JDK = "jdk";
 
     /**
      * protobuf序列化协议
