@@ -49,6 +49,7 @@ public class ZookeeperServiceRegister extends DefaultServiceRegister {
         service.setServiceProtocol(protocol);
         service.setWeight(this.weight);
 
+        this.exportService(service);
 
     }
 

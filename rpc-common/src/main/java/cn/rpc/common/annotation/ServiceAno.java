@@ -1,6 +1,8 @@
 package cn.rpc.common.annotation;
 
 import java.lang.annotation.*;
+
+import lombok.val;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,4 +16,5 @@ import org.springframework.stereotype.Component;
 @Documented
 @Component
 public @interface ServiceAno {
+    String value() default "";
 }

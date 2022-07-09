@@ -8,7 +8,6 @@ import lombok.Data;
  * @Author: 阿左不是蜗牛
  * @Description: 服务持有对象，保存具体的服务信息备用
  */
-@Data
 public class ServiceObject {
 
     /**
@@ -25,4 +24,34 @@ public class ServiceObject {
      * 服务实例
      */
     private Object obj;
+
+    public ServiceObject(String name, Class<?> clazz, Object obj) {
+        this.name = name;
+        this.clazz = clazz;
+        this.obj = obj;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Class<?> getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(Class<?> clazz) {
+        this.clazz = clazz;
+    }
+
+    public Object getObj() {
+        return obj;
+    }
+
+    public void setObj(Object obj) {
+        this.obj = obj;
+    }
 }

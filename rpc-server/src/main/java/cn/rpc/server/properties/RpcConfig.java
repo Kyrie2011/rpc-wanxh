@@ -24,7 +24,7 @@ public class RpcConfig {
     /**
      * 服务协议
      */
-    private String protocol = "java";
+    private String protocol = "jdk";
 
     /**
      * 负载均衡算法

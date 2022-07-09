@@ -39,6 +39,11 @@ public class RpcAutoConfiguration {
         return new RpcConfig();
     }
 
+    /**
+     * 服务注册bean对象
+     * @param rpcConfig
+     * @return
+     */
     @Bean
     public ServiceRegister serviceRegister(@Autowired RpcConfig rpcConfig){
 
@@ -50,12 +55,24 @@ public class RpcAutoConfiguration {
         );
     }
 
+    /**
+     * 服务端请求处理器bean对象
+     * @param serviceRegister
+     * @param rpcConfig
+     * @return
+     */
     @Bean
     public ServerRequestHandler requestHandler(@Autowired ServiceRegister serviceRegister, @Autowired RpcConfig rpcConfig){
         return new ServerRequestHandler(getMessageProtocol(rpcConfig.getProtocol()) ,serviceRegister);
 
     }
 
+    /**
+     * RpcServer
+     * @param requestHandler
+     * @param rpcConfig
+     * @return
+     */
     @Bean
     public RpcServer rpcServer(@Autowired ServerRequestHandler requestHandler, @Autowired RpcConfig rpcConfig){
 
@@ -63,6 +80,12 @@ public class RpcAutoConfiguration {
 
     }
 
+    /**
+     * 代理工厂bean
+     * @param rpcConfig
+     * @return
+     */
+    @Bean
     public ClientProxyFactory proxyFactory(@Autowired RpcConfig rpcConfig){
         ClientProxyFactory clientProxyFactory = new ClientProxyFactory();
         // 设置服务发现者
@@ -80,6 +103,8 @@ public class RpcAutoConfiguration {
 
         return clientProxyFactory;
     }
+
+
 
     /**
      * 利用JDK的SPI机制
